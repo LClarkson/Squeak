@@ -7,7 +7,6 @@ import Button from './src/components/Button.js';
 
 
 export default function App() {
-
   // camera state
   const [hasCameraPermission, setHasCameraPermission] = useState(null);
   const [image, setImage] = useState(null);
@@ -18,6 +17,7 @@ export default function App() {
   // audio state
   const [sound, setSound] = useState();
 
+  // get camera permissions
   useEffect(() => {
     (async () => {
       MediaLibrary.requestPermissionsAsync();
@@ -26,6 +26,11 @@ export default function App() {
     })();
   }, []);
 
+  if (hasCameraPermission === false) {
+    return <Text>No Access to Camera</Text>;
+  }
+
+  // take picture function
   const takePicture = async () => {
     if (cameraRef) {
       try {
@@ -38,25 +43,22 @@ export default function App() {
     }
   };
 
+  // play sound function
   const playSound = async () => {
-    console.log('Loading sound...');
-    const { sound } = await Audio.Sound.createAsync( require('./assets/squeak.mp3')
+    console.log("Loading sound...");
+    const { sound } = await Audio.Sound.createAsync(
+      require("./assets/squeak.mp3")
     );
     setSound(sound);
-    console.log('Playing sound...');
+    console.log("Playing sound...");
     await sound.playAsync();
-  }
+  };
 
-  if (hasCameraPermission === false) {
-    return <Text>No Access to Camera</Text>;
-  }
-
-  
-
+  // clean up sound resources
   useEffect(() => {
     return sound
       ? () => {
-          console.log('Unloading Sound');
+          console.log("Unloading Sound");
           sound.unloadAsync();
         }
       : undefined;
@@ -69,34 +71,35 @@ export default function App() {
         type={type}
         flashMode={flash}
         ref={cameraRef}
-      ></Camera>
-      <View style={styles.controls}>
-        <Button style={styles.flip} icon="cycle"></Button>
-        <Button style={styles.shutter} icon="controller-record"  onPress={takePicture}></Button>
-        <Button style={styles.noiseMaker} icon="controller-play" onPress={playSound}></Button>
-      </View>
+      >
+        <View style={styles.controls}>
+          <Button icon="cycle" size={40}></Button>
+          <Button icon="controller-record" size={80} onPress={takePicture}></Button>
+          <Button icon="controller-play" size={40} onPress={playSound}></Button>
+        </View>
+      </Camera>
     </View>
   );
 }
 
+// stylesheets
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: "#000",
     alignItems: "center",
     justifyContent: "center",
   },
   camera: {
-    marginTop: "20%",
     width: "100%",
-    height: "65%",
-    borderRadius: 20,
+    height: "auto"
   },
   controls: {
     flex: 1,
     flexDirection: "row",
-    width: "85%",
+    width: "100%",
     justifyContent: "space-around",
+    alignItems: "flex-end",
+    bottom: "10%",
   }
 
 });
