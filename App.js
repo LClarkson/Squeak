@@ -7,6 +7,7 @@ import * as MediaLibrary from 'expo-media-library';
 import * as ImagePicker from 'expo-image-picker';
 import Button from './src/components/Button.js';
 
+// project currently in prototype phase//
 
 export default function App() {
   // camera state
